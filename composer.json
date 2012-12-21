@@ -19,10 +19,5 @@
     "autoload": {
         "psr-0": { "Contrib\\CommonBundle": "" }
     },
-    "target-dir": "Contrib/CommonBundle",
-    "extra": {
-        "branch-alias": {
-            "dev-master": "master"
-        }
-    }
+    "target-dir": "Contrib/CommonBundle"
 }
