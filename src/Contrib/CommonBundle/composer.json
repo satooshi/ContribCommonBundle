@@ -1,5 +1,5 @@
 {
-    "name": "contrib/common-bundle",
+    "name": "satooshi/symfony2contrib-common-bundle",
     "description": "Symfony2 contrib common bundle",
     "keywords": ["contrib"],
     "homepage": "https://github.com/satooshi/ContribCommonBundle",
