@@ -57,7 +57,7 @@ class FormErrorSummary
      */
     public function collectErrors(Form $form)
     {
-        if (!$form->hasChildren()) {
+        if (count($form) === 0) {
             // assuming this form is the leaf node
             return $this->collectLeafFormErrors($form);
         }
@@ -102,7 +102,7 @@ class FormErrorSummary
             $errors[$formName] = $this->collectFormErrors($form);
         }
 
-        foreach ($form->getChildren() as $child) {
+        foreach ($form->all() as $child) {
             // field error
             $childErrors = $this->collectErrors($child);
 
