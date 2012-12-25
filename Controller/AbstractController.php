@@ -167,6 +167,25 @@ abstract class AbstractController extends Controller
         return $myData[$this->flashKey];
     }
 
+    /**
+     * Return my flash if the flash data exists, 404 otherwise.
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function assertMyFlash($name)
+    {
+        $flash = $this->getMyFlash();
+
+        if (!array_key_exists($name, $flash)) {
+            throw $this->createNotFoundException('Unable to find flash.');
+        }
+
+        $this->setMyFlash($flash);
+
+        return $flash;
+    }
+
     // request method utility
 
     /**
@@ -245,6 +264,7 @@ abstract class AbstractController extends Controller
     /**
      * Return entity manager.
      *
+     * @param string $name The object manager name (null for the default one)
      * @return \Doctrine\Common\Persistence\ObjectManager
      */
     public function getManager($name = null)
