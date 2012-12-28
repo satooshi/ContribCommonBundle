@@ -69,6 +69,20 @@ class FormErrorSummary
     // internal method
 
     /**
+     * Return form error data.
+     *
+     * @param Form $form
+     * @return array ['label' => 'form label', 'messages' => ['msg1', 'msg2', ...]]
+     */
+    private function getErrorData(Form $form)
+    {
+        return array(
+            'label'    => $form->getConfig()->getOption('label'),
+            'messages' => $this->collectFormErrors($form),
+        );
+    }
+
+    /**
      * Collect validation error messages from leaf node form.
      *
      * @param Form $form
@@ -76,14 +90,11 @@ class FormErrorSummary
      */
     private function collectLeafFormErrors(Form $form)
     {
-        $errors = array();
-
-        if ($form->hasErrors()) {
-            $errors['label']    = $form->getConfig()->getOption('label');
-            $errors['messages'] = $this->collectFormErrors($form);
+        if (!$form->hasErrors()) {
+            return array();
         }
 
-        return $errors;
+        return $this->getErrorData($form);
     }
 
     /**
@@ -99,7 +110,7 @@ class FormErrorSummary
 
         if ($form->hasErrors()) {
             // form-wide error
-            $errors[$formName] = $this->collectFormErrors($form);
+            $errors[$formName] = $this->getErrorData($form);
         }
 
         foreach ($form->all() as $child) {
