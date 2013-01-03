@@ -159,8 +159,19 @@ class FormErrorSummary
      */
     private function translateValidatorMessage(FormError $error)
     {
-        return $this->translator->trans(
+        $pluralNumber = $error->getMessagePluralization();
+
+        if ($pluralNumber === null) {
+            return $this->translator->trans(
+                $error->getMessageTemplate(),
+                $error->getMessageParameters(),
+                'validators'
+            );
+        }
+
+        return $this->translator->transChoice(
             $error->getMessageTemplate(),
+            $pluralNumber,
             $error->getMessageParameters(),
             'validators'
         );
