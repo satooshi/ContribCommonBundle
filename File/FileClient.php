@@ -257,20 +257,28 @@ class FileClient
     /**
      * Apply a callback to every line except for empty line.
      *
-     * @param callable $callback function ($line, $numLine).
-     * @param integer  $limit    Count of the limit.
-     * @param integer  $offset   Offset of the limit.
+     * @param callable $callback  function ($line, $numLine).
+     * @param boolean  $skipEmpty Whether to skip count if empty line.
+     * @param integer  $limit     Count of the limit.
+     * @param integer  $offset    Offset of the limit.
      * @return \Iterator|false Iterator on success, false on failure.
      */
-    public function walk($callback, $limit = -1, $offset = 0)
+    public function walk($callback, $skipEmptyCount = true, $limit = -1, $offset = 0)
     {
-        $iterator = $this->createLineIterator($this->path, $this->filterLimit($limit), $this->filterOffset($offset));
+        $limit  = $this->filterLimit($limit);
+        $offset = $this->filterOffset($offset);
+
+        $iterator = $this->createLineIterator($this->path, $skipEmptyCount, $limit, $offset);
 
         if ($iterator === false) {
             return false;
         }
 
-        $this->iterate($callback, $iterator);
+        if ($skipEmptyCount && $limit > 0) {
+            $this->iterateLimit($callback, $iterator, $limit);
+        } else {
+            $this->iterate($callback, $iterator);
+        }
 
         if ($iterator instanceof \IteratorIterator) {
             $this->isSuspended = $iterator->getInnerIterator()->valid();
@@ -377,6 +385,40 @@ class FileClient
     }
 
     /**
+     * Iterate iterator until limit excluding empty line count.
+     *
+     * @param callable  $callback
+     * @param \Iterator $iterator
+     * @param integer   $limit
+     * @return void
+     */
+    protected function iterateLimit($callback, \Iterator $iterator, $limit)
+    {
+        $readLine = 0;
+
+        foreach ($iterator as $numLine => $data) {
+            $line = $this->trimLine($data);
+
+            if (empty($line)) {
+                // skip empty line
+                continue;
+            }
+
+            $items = $this->filterIteratedLine($line);
+
+            if (!$callback($items, $numLine)) {
+                return;
+            }
+
+            $readLine++;
+
+            if ($readLine === $limit) {
+                return;
+            }
+        }
+    }
+
+    /**
      * Trim line.
      *
      * @param string $line
@@ -401,12 +443,13 @@ class FileClient
     /**
      * Create LineIterator.
      *
-     * @param string  $path   File path.
-     * @param integer $limit  Count of the limit.
-     * @param integer $offset Offset of the limit.
+     * @param string  $path      File path.
+     * @param boolean $skipEmpty Whether to skip count if empty line.
+     * @param integer $limit     Count of the limit.
+     * @param integer $offset    Offset of the limit.
      * @return \Iterator LimitIterator if limit specified, LineIterator otherwise.
      */
-    protected function createLineIterator($path, $limit = -1, $offset = 0)
+    protected function createLineIterator($path, $skipEmptyCount, $limit = -1, $offset = 0)
     {
         $handle = $this->openForRead($path);
 
@@ -416,7 +459,7 @@ class FileClient
 
         $iterator = new LineIterator($handle);
 
-        if ($limit <= 0) {
+        if ($limit <= 0 || $skipEmptyCount) {
             return $iterator;
         }
 
