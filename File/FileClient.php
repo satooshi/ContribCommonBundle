@@ -40,6 +40,19 @@ class FileClient
     protected $throwException;
 
     /**
+     * Whether to use auto_detect_line_endings.
+     * @var boolean
+     */
+    protected $autoDetectLineEnding;
+
+    /**
+     * Whether the client suspended to read file.
+     *
+     * @var boolean
+     */
+    protected $isSuspended = false;
+
+    /**
      * LineReader.
      *
      * @var LineReader
@@ -61,24 +74,21 @@ class FileClient
     protected $lineAppender;
 
     /**
-     * Whether the client suspended to read file.
-     *
-     * @var boolean
-     */
-    protected $isSuspended = false;
-
-    /**
      * Constructor.
      *
-     * @param string  $path           File path.
-     * @param string  $newLine        New line to be written (Default is PHP_EOL).
-     * @param boolean $throwException Whether to throw exception.
+     * @param string  $path                 File path.
+     * @param string  $newLine              New line to be written (Default is PHP_EOL).
+     * @param boolean $throwException       Whether to throw exception.
+     * @param boolean $autoDetectLineEnding Whether to use auto_detect_line_endings.
      */
-    public function __construct($path, $newLine = PHP_EOL, $throwException = true)
+    public function __construct($path, $newLine = PHP_EOL, $throwException = true, $autoDetectLineEnding = true)
     {
-        $this->path           = $path;
-        $this->newLine        = $newLine;
-        $this->throwException = $throwException;
+        $this->path                 = $path;
+        $this->newLine              = $newLine;
+        $this->throwException       = $throwException;
+        $this->autoDetectLineEnding = $autoDetectLineEnding;
+
+        ini_set('auto_detect_line_endings', $this->autoDetectLineEnding);
     }
 
     // API

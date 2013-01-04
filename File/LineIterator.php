@@ -21,28 +21,6 @@ class LineIterator extends AbstractFileHandler implements \Iterator
      */
     protected $line;
 
-    /**
-     * Whether to use auto_detect_line_endings.
-     * @var boolean
-     */
-    protected $autoDetectLineEnding;
-
-    /**
-     * Constructor.
-     *
-     * @param resource $handle               File handle.
-     * @param boolean  $autoDetectLineEnding Whether to use auto_detect_line_endings.
-     * @throws \RuntimeException
-     */
-    public function __construct($handle, $autoDetectLineEnding = true)
-    {
-        parent::__construct($handle);
-
-        $this->autoDetectLineEnding = $autoDetectLineEnding;
-
-        ini_set('auto_detect_line_endings', $this->autoDetectLineEnding);
-    }
-
     // Iterator interface
 
     /**
