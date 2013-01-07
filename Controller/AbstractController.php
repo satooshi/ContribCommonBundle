@@ -114,7 +114,13 @@ abstract class AbstractController extends Controller
      */
     public function getFlash()
     {
-        return $this->getFlashBag()->get('my_data', null);
+        $flash = $this->getFlashBag()->get('my_data');
+
+        if (is_array($flash) && empty($flash)) {
+            return null;
+        }
+
+        return $flash;
     }
 
     /**
@@ -149,9 +155,14 @@ abstract class AbstractController extends Controller
      */
     public function getMyFlash()
     {
-        $type = 'my_data_' . $this->flashKey;
+        $type  = 'my_data_' . $this->flashKey;
+        $flash = $this->getFlashBag()->get($type);
 
-        return $this->getFlashBag()->get($type, null);
+        if (is_array($flash) && empty($flash)) {
+            return null;
+        }
+
+        return $flash;
     }
 
     /**
