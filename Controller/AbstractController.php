@@ -21,11 +21,21 @@ abstract class AbstractController extends Controller
     /**
      * Return Session object.
      *
-     * @return Symfony\Component\HttpFoundation\Session\SessionInterface
+     * @return Symfony\Component\HttpFoundation\Session\Session
      */
     public function getSession()
     {
-        return $this->getRequest()->getSession();
+        return $this->get('session');
+    }
+
+    /**
+     * Return FlashBag object.
+     *
+     * @return Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface
+     */
+    public function getFlashBag()
+    {
+        return $this->getSession()->getFlashBag();
     }
 
     // flash message
@@ -38,7 +48,7 @@ abstract class AbstractController extends Controller
      */
     public function setSuccessMessage($message)
     {
-        $this->getSession()->setFlash('success', $message);
+        $this->getFlashBag()->set('success', $message);
     }
 
     /**
@@ -49,7 +59,7 @@ abstract class AbstractController extends Controller
      */
     public function setInfoMessage($message)
     {
-        $this->getSession()->setFlash('info', $message);
+        $this->getFlashBag()->set('info', $message);
     }
 
     /**
@@ -60,7 +70,7 @@ abstract class AbstractController extends Controller
      */
     public function setNoticeMessage($message)
     {
-        $this->getSession()->setFlash('notice', $message);
+        $this->getFlashBag()->set('notice', $message);
     }
 
     /**
@@ -71,7 +81,7 @@ abstract class AbstractController extends Controller
      */
     public function setErrorMessage($message)
     {
-        $this->getSession()->setFlash('error', $message);
+        $this->getFlashBag()->set('error', $message);
     }
 
     // flash data
@@ -84,13 +94,7 @@ abstract class AbstractController extends Controller
      */
     public function setFlash($data)
     {
-        if (null === $data) {
-            $serialized = null;
-        } else {
-            $serialized = serialize($data);
-        }
-
-        $this->getSession()->setFlash('my_data', $serialized);
+        $this->getFlashBag()->set('my_data', $data);
     }
 
     /**
@@ -100,7 +104,7 @@ abstract class AbstractController extends Controller
      */
     public function deleteFlash()
     {
-        $this->setFlash(null);
+        $this->getFlashBag()->get('my_data');
     }
 
     /**
@@ -110,13 +114,7 @@ abstract class AbstractController extends Controller
      */
     public function getFlash()
     {
-        $serialized = $this->getSession()->getFlash('my_data');
-
-        if (null === $serialized) {
-            return null;
-        }
-
-        return unserialize($serialized);
+        return $this->getFlashBag()->get('my_data', null);
     }
 
     /**
@@ -127,13 +125,9 @@ abstract class AbstractController extends Controller
      */
     public function setMyFlash($data)
     {
-        if (null === $data) {
-            $myData = null;
-        } else {
-            $myData = array($this->flashKey => $data);
-        }
+        $type = 'my_data_' . $this->flashKey;
 
-        $this->setFlash($myData);
+        $this->getFlashBag()->set($type, $data);
     }
 
     /**
@@ -145,10 +139,7 @@ abstract class AbstractController extends Controller
      */
     public function deleteMyFlash()
     {
-        $flash = $this->getFlash();
-        unset($flash[$this->flashKey]);
-
-        $this->setFlash($flash);
+        $this->getMyFlash();
     }
 
     /**
@@ -158,13 +149,9 @@ abstract class AbstractController extends Controller
      */
     public function getMyFlash()
     {
-        $myData = $this->getFlash();
+        $type = 'my_data_' . $this->flashKey;
 
-        if (null === $myData || !isset($myData[$this->flashKey])) {
-            return null;
-        }
-
-        return $myData[$this->flashKey];
+        return $this->getFlashBag()->get($type, null);
     }
 
     /**
