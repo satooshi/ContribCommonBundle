@@ -18,6 +18,8 @@ abstract class AbstractController extends Controller
      */
     protected $flashKey = null;
 
+    // session
+
     /**
      * Return Session object.
      *
