@@ -102,7 +102,7 @@ abstract class AbstractController extends Controller
      *
      * @return void
      */
-    public function deleteFlash()
+    public function removeFlash()
     {
         $this->getFlashBag()->get('my_data');
     }
@@ -143,7 +143,7 @@ abstract class AbstractController extends Controller
      *
      * @return void
      */
-    public function deleteMyFlash()
+    public function removeMyFlash()
     {
         $this->getMyFlash();
     }
