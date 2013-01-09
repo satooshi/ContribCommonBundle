@@ -177,7 +177,7 @@ abstract class AbstractController extends Controller
     {
         $flash = $this->getMyFlash();
 
-        if (!array_key_exists($name, $flash)) {
+        if (!is_array($flash) || !array_key_exists($name, $flash)) {
             throw $this->createNotFoundException('Unable to find flash.');
         }
 
