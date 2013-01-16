@@ -126,7 +126,12 @@ class Mailer
         $template = $this->parameters[$template];
         $rendered = $this->templating->render($template, $parameters);
 
-        return $this->sendMessage($rendered, $this->parameters['from_email']['all'], $emailTo);
+        // convert crlf, cr to lf
+        $r1 = str_replace("\r\n", "\n", $rendered);
+        $r2 = str_replace("\r", "\n", $r1);
+        $r3 = str_replace("\n", "\r\n", $r2);
+
+        return $this->sendMessage($r3, $this->parameters['from_email']['all'], $emailTo);
     }
 
     /**
