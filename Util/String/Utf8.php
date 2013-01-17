@@ -5,7 +5,7 @@ namespace Contrib\CommonBundle\Util\String;
 /**
  * UTF-8 utility.
  */
-class Utf8
+class Utf8 extends EncodingConverter
 {
     /**
      * Return UTF-8 encoded string from auto detected encoding.
@@ -17,6 +17,6 @@ class Utf8
      */
     public static function auto($str)
     {
-        return mb_convert_encoding($str, 'UTF-8', 'auto');
+        return mb_convert_encoding($str, 'UTF-8', static::AUTO);
     }
 }
