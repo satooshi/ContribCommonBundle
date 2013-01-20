@@ -14,6 +14,8 @@ abstract class CsvSequentialReader
      */
     protected $em;
 
+    protected $headerCount;
+
     // data
 
     /**
@@ -41,10 +43,12 @@ abstract class CsvSequentialReader
      * Constructor.
      *
      * @param EntityManager $em
+     * @param integer       $headerCount
      */
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, $headerCount = 0)
     {
         $this->em = $em;
+        $this->headerCount = $headerCount;
     }
 
     // API
@@ -55,7 +59,7 @@ abstract class CsvSequentialReader
         $length = count($items);
 
         try {
-            if ($numLine === 1) {
+            if ($numLine <= $this->headerCount) {
                 return $this->readHeader($items, $numLine, $length);
             }
 
