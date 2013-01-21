@@ -1,4 +1,4 @@
 ContribCommonBundle
 ===================
 
-Symfony2 Contrib\CommonBundle.
+Symfony2 Contrib\Bundle\CommonBundle.

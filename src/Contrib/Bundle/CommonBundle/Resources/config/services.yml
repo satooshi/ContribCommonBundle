@@ -1,0 +1,10 @@
+
+parameters:
+    contrib.common.doctrine_validator.class: Contrib\Bundle\CommonBundle\Validator\Constraints\DoctrineValidator
+
+services:
+    validator.contrib.common.doctrine_validator:
+        class: %contrib.common.DoctrineValidator.class%
+        arguments: [@doctrine]
+        tags:
+            - { name: validator.constraint_validator, alias: doctrine_validator }
